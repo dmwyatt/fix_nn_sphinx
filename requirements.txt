@@ -1,0 +1,2 @@
+oursql==0.9.3.1
+python-dateutil==2.1
