@@ -106,10 +106,18 @@ def next_rebuild_date(sphinx_config, cursor, id_):
 
 	sql = "UPDATE sphinx SET lastrebuilddate = NOW(), nextrebuilddate = ? WHERE ID = ?"
 	now = get_mysql_now(cursor)
+
+	# convert the string like "0330" into an hour and minute
 	config_dt = datetime.datetime.strptime(sphinx_config['sphinxrebuildfreq'], '%H%M')
+
+	# Create a datetime for today set to the hour and minute configured for sphinx
 	base_dt = datetime.datetime(now.year, now.month, now.day, config_dt.hour, config_dt.minute, 0)
 
+	# Get next weekday configured to run.  Dateutil takes care of weekdays
+	# crossing year/month/leap/whatever boundaries
 	next = base_dt + relativedelta(weekday=day)
+
+	# Update the db
 	cursor.execute(sql, (next, id_))
 
 
@@ -143,13 +151,20 @@ def next_merge_date_sql(sphinx_config, cursor, id_):
 	:type id_: int
 	"""
 	sql = "UPDATE sphinx SET lastmergedate = NOW(), nextmergedate = ? WHERE ID = ?"
-	config_dt = datetime.datetime.strptime(sphinx_config['sphinxmergefreq'], '%H%M')
-	_now = get_mysql_now(cursor)
-	today_merge = datetime.datetime(_now.year, _now.month, _now.day, config_dt.hour, config_dt.minute, 0)
+	now = get_mysql_now(cursor)
 
-	if today_merge > _now:
+	# convert the string like "0330" into an hour and minute
+	config_dt = datetime.datetime.strptime(sphinx_config['sphinxmergefreq'], '%H%M')
+
+	# Create a datetime for today at the configured hour and minute
+	today_merge = datetime.datetime(now.year, now.month, now.day, config_dt.hour, config_dt.minute, 0)
+
+
+	if today_merge > now:
+		# If we haven't go to the configured hour and minute on today, use that datetime
 		next = today_merge
 	else:
+		# If we've passed the hour/minute for today, use that hour/minute tomorrow
 		next = today_merge + relativedelta(days=+1)
 
 	cursor.execute(sql, (next, id_))
