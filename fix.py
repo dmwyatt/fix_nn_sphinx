@@ -2,8 +2,10 @@
 Run this script every few minutes via cron to make sure that sphinx behaves properly.
 
 For some reason newznab's sphinx.php does not reliably set the last/next datetimes after merge/rebuilds.
-sphinx.php sends the correct SQL statement to db.php, but it just doesn't do anything!  I got tired of
-trying to figure it out (lol, PHP) so wrote this script in an hour and now don't worry about it.
+sphinx.php sends the correct SQL statement to db.php, but it just doesn't do anything!  This leads to rebuild/merge 
+running continuously.
+
+I got tired of trying to figure it out (lol, PHP) so wrote this script in an hour and now don't worry about it.
 
 Note that if you run this too quickly, it could set the next merge or rebuild date too quickly.  For example:
 
