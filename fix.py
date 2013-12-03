@@ -163,6 +163,8 @@ def get_mysql_now(cursor):
 	instead of the machine this script is running on.
 
 	:param cursor: A DB-API 2.0 cursor using `qmark` style parameterization
+	:returns: The datetime on the database server
+	:rtype: datetime.datetime
 	"""
 	cursor.execute("SELECT NOW()")
 	return cursor.fetchall()[0]['NOW()']
