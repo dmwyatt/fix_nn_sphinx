@@ -115,11 +115,11 @@ def next_rebuild_date(sphinx_config, cursor, id_):
 
 	# Get next weekday configured to run.  Dateutil takes care of weekdays
 	# crossing year/month/leap/whatever boundaries
-	next = base_dt + relativedelta(weekday=day)
+	next = base_dt + relativedelta(weeks=+1, weekday=day)
 
 	# Update the db
 	cursor.execute(sql, (next, id_))
-
+	print "Updated next rebuild date to: {}".format(next)
 
 def get_day(day_name):
 	"""Gets the dateutil day for the corresponding weekday name"""
@@ -168,6 +168,7 @@ def next_merge_date_sql(sphinx_config, cursor, id_):
 		next = today_merge + relativedelta(days=+1)
 
 	cursor.execute(sql, (next, id_))
+	print "Updated next rebuild merge to: {}".format(next)
 
 
 def get_mysql_now(cursor):
